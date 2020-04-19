@@ -1,14 +1,14 @@
-import React, {Component} from 'react';
-import {View, TouchableOpacity, Text} from 'react-native';
+import React, { Component } from 'react';
+import { View, TouchableOpacity, Text, Platform } from 'react-native';
 import PropTypes from 'prop-types';
-import {shouldUpdate} from '../../../component-updater';
-
+import { shouldUpdate } from '../../../component-updater';
+import { TouchableOpacity as TouchableOpacityForAndroid } from 'react-native-gesture-handler';
 import styleConstructor from './style';
 
 
 class Day extends Component {
   static displayName = 'IGNORE';
-  
+
   static propTypes = {
     // TODO: disabled props should be removed
     state: PropTypes.oneOf(['disabled', 'today', '']),
@@ -44,16 +44,16 @@ class Day extends Component {
     const containerStyle = [this.style.base];
     const textStyle = [this.style.text];
     const dotStyle = [this.style.dot];
-    
+
     let marking = this.props.marking || {};
     if (marking && marking.constructor === Array && marking.length) {
       marking = {
         marking: true
       };
     }
-    
+
     const isDisabled = typeof marking.disabled !== 'undefined' ? marking.disabled : this.props.state === 'disabled';
-    
+
     let dot;
     if (marking.marked) {
       dotStyle.push(this.style.visibleDot);
@@ -61,15 +61,15 @@ class Day extends Component {
         dotStyle.push(this.style.disabledDot);
       }
       if (marking.dotColor) {
-        dotStyle.push({backgroundColor: marking.dotColor});
+        dotStyle.push({ backgroundColor: marking.dotColor });
       }
-      dot = (<View style={dotStyle}/>);
+      dot = (<View style={dotStyle} />);
     }
 
     if (marking.selected) {
       containerStyle.push(this.style.selected);
       if (marking.selectedColor) {
-        containerStyle.push({backgroundColor: marking.selectedColor});
+        containerStyle.push({ backgroundColor: marking.selectedColor });
       }
       dotStyle.push(this.style.selectedDot);
       textStyle.push(this.style.selectedText);
@@ -82,19 +82,34 @@ class Day extends Component {
     }
 
     return (
-      <TouchableOpacity
-        testID={this.props.testID}
-        style={containerStyle}
-        onPress={this.onDayPress}
-        onLongPress={this.onDayLongPress}
-        activeOpacity={marking.activeOpacity}
-        disabled={marking.disableTouchEvent}
-        accessibilityRole={isDisabled ? undefined : 'button'}
-        accessibilityLabel={this.props.accessibilityLabel}
-      >
-        <Text allowFontScaling={false} style={textStyle}>{String(this.props.children)}</Text>
-        {dot}
-      </TouchableOpacity>
+      Platform.OS = 'ios' ?
+        <TouchableOpacity
+          testID={this.props.testID}
+          style={containerStyle}
+          onPress={this.onDayPress}
+          onLongPress={this.onDayLongPress}
+          activeOpacity={marking.activeOpacity}
+          disabled={marking.disableTouchEvent}
+          accessibilityRole={isDisabled ? undefined : 'button'}
+          accessibilityLabel={this.props.accessibilityLabel}
+        >
+          <Text allowFontScaling={false} style={textStyle}>{String(this.props.children)}</Text>
+          {dot}
+        </TouchableOpacity>
+        :
+        <TouchableOpacityForAndroid
+          testID={this.props.testID}
+          style={containerStyle}
+          onPress={this.onDayPress}
+          onLongPress={this.onDayLongPress}
+          activeOpacity={marking.activeOpacity}
+          disabled={marking.disableTouchEvent}
+          accessibilityRole={isDisabled ? undefined : 'button'}
+          accessibilityLabel={this.props.accessibilityLabel}
+        >
+          <Text allowFontScaling={false} style={textStyle}>{String(this.props.children)}</Text>
+          {dot}
+        </TouchableOpacityForAndroid>
     );
   }
 }
