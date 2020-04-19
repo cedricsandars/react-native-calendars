@@ -82,7 +82,7 @@ class Day extends Component {
     }
 
     return (
-      Platform.OS = 'ios' ?
+      Platform.OS == 'ios' ?
         <TouchableOpacity
           testID={this.props.testID}
           style={containerStyle}
